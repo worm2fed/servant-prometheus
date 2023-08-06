@@ -5,7 +5,7 @@ cabal-version: 2.4
 -- see: https://github.com/sol/hpack
 
 name:           servant-prometheus
-version:        0.1.0
+version:        0.1.1
 synopsis:       Helpers for using prometheus with servant
 description:    Please see the README on GitHub at <https://github.com/worm2fed/servant-prometheus#readme>
 category:       Servant, Web, System
@@ -57,6 +57,7 @@ library
       ScopedTypeVariables
       TypeFamilies
       TypeOperators
+      UndecidableInstances
   ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-inferred-safe-imports -Wno-missing-safe-haskell-mode -Wno-implicit-prelude -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-prepositive-qualified-module -Wno-missing-kind-signatures
   build-depends:
       base >=4.10 && <5
@@ -97,6 +98,7 @@ test-suite spec
       ScopedTypeVariables
       TypeFamilies
       TypeOperators
+      UndecidableInstances
   ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-inferred-safe-imports -Wno-missing-safe-haskell-mode -Wno-implicit-prelude -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-prepositive-qualified-module -Wno-missing-kind-signatures -Wno-missing-export-lists -threaded "-with-rtsopts=-N -A64m -AL256m"
   build-tool-depends:
       hspec-discover:hspec-discover
@@ -143,6 +145,7 @@ benchmark bench
       ScopedTypeVariables
       TypeFamilies
       TypeOperators
+      UndecidableInstances
   ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-inferred-safe-imports -Wno-missing-safe-haskell-mode -Wno-implicit-prelude -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-prepositive-qualified-module -Wno-missing-kind-signatures -threaded "-with-rtsopts=-N -A64m -AL256m"
   build-depends:
       base >=4.10 && <5

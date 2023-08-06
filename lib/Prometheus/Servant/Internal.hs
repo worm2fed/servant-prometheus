@@ -30,6 +30,10 @@ instance HasEndpoint EmptyAPI where
   getEndpoint _ _ = Nothing
   enumerateEndpoints _ = []
 
+instance HasEndpoint (ToServantApi sub) => HasEndpoint (NamedRoutes sub) where
+  getEndpoint _ = getEndpoint (Proxy :: Proxy (ToServantApi sub))
+  enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy (ToServantApi sub))
+
 instance (HasEndpoint (a :: Type), HasEndpoint (b :: Type)) => HasEndpoint (a :<|> b) where
   getEndpoint _ req =
     getEndpoint (Proxy :: Proxy a) req
