@@ -1,0 +1,14 @@
+cradle:
+  stack:
+    - path: "./lib"
+      component: "servant-prometheus:lib"
+
+    - path: "./bench"
+      component: "servant-prometheus:bench:bench"
+
+    - path: "./test"
+      component: "servant-prometheus:test:spec"
+
+dependencies:
+  - ./package.yaml
+  - ./stack.yaml

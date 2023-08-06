@@ -2,68 +2,94 @@
 name: CI
 
 on:
-  push:
-    branches:
-    - '**'
-    paths-ignore: []
   pull_request:
-    paths-ignore: []
+    branches: [master]
+  push:
+    branches: [master]
+  # additionally run once per week (At 00:00 on Sunday) to maintain cache
+  schedule:
+    - cron: "0 0 * * 0"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  linux:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
 
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        versions:
-          - ghc: '8.6.5'
-            cabal: '3.6'
-          - ghc: '8.8.4'
-            cabal: '3.6'
-          - ghc: '8.10.7'
-            cabal: '3.6'
-          # - ghc: '9.0.2'
-          #   cabal: '3.6'
+    env:
+      GHC_VERSION: 9.2.8
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-    # need to install older cabal/ghc versions from ppa repository
+      - name: Setup job-local environment
+        run: |
+          {
+            echo "STACK_LTS=$(awk '/^resolver:/{print $2}' stack.yaml)"
+          } >> $GITHUB_ENV
 
-    - name: Install recent cabal/ghc
-      uses: haskell/actions/setup@v1
-      with:
-        ghc-version: ${{ matrix.versions.ghc }}
-        cabal-version: ${{ matrix.versions.cabal }}
+      - name: Cache GHC installation
+        uses: actions/cache@v3
+        id: ghcup
+        with:
+          path: |
+            ~/.ghcup/bin/*
+            ~/.ghcup/cache/*
+            ~/.ghcup/config.yaml
+            ~/.ghcup/ghc/${{ env.GHC_VERSION }}
+          key: ghcup-${{ env.GHC_VERSION }}
 
-    # declare/restore cached things
-    # caching doesn't work for scheduled runs yet
-    # https://github.com/actions/cache/issues/63
+      - uses: haskell/actions/setup@v2
+        if: steps.ghcup.outputs.cache-hit != 'true'
+        with:
+          ghc-version: ${{ env.GHC_VERSION }}
+          enable-stack: true
+          stack-version: "latest"
 
-    - name: Cache cabal global package db
-      id:   cabal-global
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cabal
-        key: ${{ runner.os }}-${{ matrix.versions.ghc }}-${{ matrix.versions.cabal }}-cabal-global-${{ hashFiles('cabal.project') }}
+      - name: Cache Pantry (Stackage package index)
+        id: pantry
+        uses: actions/cache@v3
+        with:
+          path: ~/.stack/pantry
+          key: stackPantry-${{ env.GHC_VERSION }}-${{ env.STACK_LTS }}
+          restore-keys: |
+            stackPantry-${{ env.GHC_VERSION }}-
+            stackPantry-
 
-    - name: Cache cabal work
-      id:   cabal-local
-      uses: actions/cache@v2
-      with:
-        path: |
-          dist-newstyle
-        key: ${{ runner.os }}-${{ matrix.versions.ghc }}-${{ matrix.versions.cabal }}-cabal-local
+      - name: Recompute Stackage package index
+        if: steps.pantry.outputs.cache-hit != 'true'
+        run: stack update # populates ~/.stack/pantry
 
-    - name: Install dependencies
-      run: |
-        cabal update
-        cabal build all --dependencies-only --enable-tests --disable-optimization
-    - name: Build
-      run: |
-        cabal build all --enable-tests --disable-optimization 2>&1 | tee build.log
-    - name: Test
-      run: |
-        cabal test all --disable-optimization
+      - name: Configure Stack
+        run: |
+          stack config set install-ghc false --global
+          stack config set system-ghc  true  --global
+
+      - name: Cache Haskell dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.stack/stack.sqlite3
+            ~/.stack/snapshots
+          # NOTE: the caching key structure:
+          #   * ghc version -- helps maintain sleek size of the cache;
+          #   * resolver version -- helps maintain sleek size of the cache;
+          #   * lockfile hashsum -- as invalidation trigger of the correct granularity.
+          # Since this cache only stores built *dependency packages* (not project code!),
+          # we should invalidate/reupload it on each change to the dependency forest (≈lockfile).
+          #
+          # All this decides when cache gets REBUILT (invalidated & recreated):
+          key: haskellDeps-${{ env.GHC_VERSION }}-${{ env.STACK_LTS }}-${{ hashFiles('**/stack.yaml.lock') }}
+          restore-keys: |
+            haskellDeps-${{ env.GHC_VERSION }}-${{ env.STACK_LTS }}-
+            haskellDeps-${{ env.GHC_VERSION }}-
+            haskellDeps-
+
+      - name: Build & Test
+        run: |
+          stack build -j2 --fast --test --pedantic \
+            --flag servant-prometheus:warning-as-error \
+            --ghc-options="-j -O0"

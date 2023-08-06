@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: © 2022 Union Platform <https://unionapp.cc>
+# SPDX-License-Identifier: LicenseRef-Union
+
+indentation: 2
+column-limit: 80
+function-arrows: leading
+comma-style: leading
+import-export-style: leading
+indent-wheres: true
+record-brace-space: false
+newlines-between-decls: 1
+haddock-style: single-line
+haddock-style-module: null
+let-style: auto
+in-style: right-align
+single-constraint-parens: auto
+unicode: never
+respectful: true
+fixities: []

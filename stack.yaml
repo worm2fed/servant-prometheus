@@ -1,6 +1,10 @@
-resolver: lts-13.6
+resolver: lts-20.26
+
+ghc-options:
+  # locally install Haddocs for "everything": deps and the project
+  $everything: -haddock
+  # speed up project build via module-parallel compile in GHC itself
+  $targets: -j
+
 packages:
-- '.'
-extra-deps:
-- ekg-0.4.0.15
-- ekg-json-0.1.0.6
+  - .

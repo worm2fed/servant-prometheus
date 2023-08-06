@@ -1,36 +1,27 @@
-# servant-ekg
+# servant-prometheus
 
-[![Build Status](https://travis-ci.org/haskell-servant/servant-ekg.png)](https://travis-ci.org/haskell-servant/servant-ekg)
-[![Build status](https://github.com/haskell-servant/servant-ekg/actions/workflows/ci.yml/badge.svg)](https://github.com/haskell-servant/servant-ekg/actions/workflows/ci.yml)
+[![Build status](https://github.com/worm2fed/servant-prometheus/actions/workflows/ci.yml/badge.svg)](https://github.com/worm2fed/servant-prometheus/actions/workflows/ci.yml)
 
 # Servant Performance Counters
 
-This package lets you track peformance counters for each of your Servant endpoints using EKG.
+This package lets you track performance counters for each of your Servant endpoints using Prometheus.
 
 # Usage
 
-Servant-EKG knows how to handle all official Servant combinators out of the box.
+Servant-Prometheus knows how to handle all official Servant combinators out of the box.
 
 ## Instrumenting your API
-To use Servant-EKG, you'll need to wrap your WAI application with the Servant-EKG middleware.
+To use Servant-Prometheus, you'll need to wrap your WAI application with the Servant-Prometheus middleware.
 
 ```
 import Network.Wai.Handler.Warp
-import System.Metrics
-import Servant.Ekg
-
-wrapWithEkg :: Proxy api -> Server api -> IO Application
-wrapWithEkg api server = do
-  monitorEndpoints' <- monitorEndpoints api =<< newStore
-
-  return $ monitorEndpoints' (serve api server)
+import Prometheus.Servant
 
 main :: IO ()
 main = do
   let api    = ...
       server = ...
-
-  app <- wrapWithEkg api server
+      app = prometheusMiddleware defaultMetrics api server
 
   run 8080 app
 ```

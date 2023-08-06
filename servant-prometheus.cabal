@@ -1,0 +1,157 @@
+cabal-version: 2.4
+
+-- This file has been generated from package.yaml by hpack version 0.35.2.
+--
+-- see: https://github.com/sol/hpack
+
+name:           servant-prometheus
+version:        0.1.0
+synopsis:       Helpers for using prometheus with servant
+description:    Please see the README on GitHub at <https://github.com/worm2fed/servant-prometheus#readme>
+category:       Servant, Web, System
+homepage:       https://github.com/worm2fed/servant-prometheus#readme
+bug-reports:    https://github.com/worm2fed/servant-prometheus/issues
+author:         Andrii Demydenko <worm2fed@gmail.com>, Anchor Engineering <engineering@lists.anchor.net.au>, Servant Contributors
+maintainer:     Andrii Demydenko <worm2fed@gmail.com>
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+tested-with:
+    GHC ==9.2.8
+extra-source-files:
+    README.md
+    CHANGELOG.md
+    LICENSE
+
+source-repository head
+  type: git
+  location: https://github.com/worm2fed/servant-prometheus
+
+flag warning-as-error
+  description: Assume every warning as error
+  manual: True
+  default: False
+
+library
+  exposed-modules:
+      Prometheus.Servant
+      Prometheus.Servant.Internal
+  other-modules:
+      Paths_servant_prometheus
+  autogen-modules:
+      Paths_servant_prometheus
+  hs-source-dirs:
+      lib
+  default-extensions:
+      BangPatterns
+      DataKinds
+      DeriveAnyClass
+      DeriveGeneric
+      DerivingStrategies
+      FlexibleContexts
+      FlexibleInstances
+      ImportQualifiedPost
+      OverloadedStrings
+      PolyKinds
+      RecordWildCards
+      ScopedTypeVariables
+      TypeFamilies
+      TypeOperators
+  ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-inferred-safe-imports -Wno-missing-safe-haskell-mode -Wno-implicit-prelude -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-prepositive-qualified-module -Wno-missing-kind-signatures
+  build-depends:
+      base >=4.10 && <5
+    , clock
+    , ghc-prim
+    , hashable
+    , http-types
+    , prometheus-client
+    , servant
+    , text
+    , wai
+  default-language: Haskell2010
+  if flag(warning-as-error)
+    ghc-options: -Werror
+
+test-suite spec
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Prometheus.ServantSpec
+      Paths_servant_prometheus
+  autogen-modules:
+      Paths_servant_prometheus
+  hs-source-dirs:
+      test
+  default-extensions:
+      BangPatterns
+      DataKinds
+      DeriveAnyClass
+      DeriveGeneric
+      DerivingStrategies
+      FlexibleContexts
+      FlexibleInstances
+      ImportQualifiedPost
+      OverloadedStrings
+      PolyKinds
+      RecordWildCards
+      ScopedTypeVariables
+      TypeFamilies
+      TypeOperators
+  ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-inferred-safe-imports -Wno-missing-safe-haskell-mode -Wno-implicit-prelude -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-prepositive-qualified-module -Wno-missing-kind-signatures -Wno-missing-export-lists -threaded "-with-rtsopts=-N -A64m -AL256m"
+  build-tool-depends:
+      hspec-discover:hspec-discover
+  build-depends:
+      aeson
+    , base >=4.10 && <5
+    , containers
+    , hspec
+    , hspec-expectations-pretty-diff
+    , http-client
+    , prometheus-client
+    , servant
+    , servant-client
+    , servant-prometheus
+    , servant-server
+    , text
+    , wai
+    , warp
+  default-language: Haskell2010
+  if flag(warning-as-error)
+    ghc-options: -Werror
+
+benchmark bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_servant_prometheus
+  autogen-modules:
+      Paths_servant_prometheus
+  hs-source-dirs:
+      bench
+  default-extensions:
+      BangPatterns
+      DataKinds
+      DeriveAnyClass
+      DeriveGeneric
+      DerivingStrategies
+      FlexibleContexts
+      FlexibleInstances
+      ImportQualifiedPost
+      OverloadedStrings
+      PolyKinds
+      RecordWildCards
+      ScopedTypeVariables
+      TypeFamilies
+      TypeOperators
+  ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-inferred-safe-imports -Wno-missing-safe-haskell-mode -Wno-implicit-prelude -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-prepositive-qualified-module -Wno-missing-kind-signatures -threaded "-with-rtsopts=-N -A64m -AL256m"
+  build-depends:
+      base >=4.10 && <5
+    , process
+    , servant-prometheus
+    , servant-server
+    , text
+    , wai
+    , warp
+  default-language: Haskell2010
+  if flag(warning-as-error)
+    ghc-options: -Werror
