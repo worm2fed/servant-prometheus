@@ -158,6 +158,17 @@ instance ReflectMethod method => HasEndpoint (NoContentVerb method) where
     where
       method = reflectMethod (Proxy :: Proxy method)
 
+instance ReflectMethod method => HasEndpoint (UVerb method contentType as) where
+  getEndpoint _ req = case pathInfo req of
+    [] | requestMethod req == method -> Just (Endpoint [] method)
+    _ -> Nothing
+    where
+      method = reflectMethod (Proxy :: Proxy method)
+
+  enumerateEndpoints _ = [Endpoint mempty method]
+    where
+      method = reflectMethod (Proxy :: Proxy method)
+
 instance ReflectMethod method => HasEndpoint (Stream method status framing ct a) where
   getEndpoint _ req = case pathInfo req of
     [] | requestMethod req == method -> Just (Endpoint [] method)
