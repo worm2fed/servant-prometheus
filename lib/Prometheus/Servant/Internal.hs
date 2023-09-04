@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 module Prometheus.Servant.Internal
   ( Endpoint (..)
   , HasEndpoint (..)
@@ -100,10 +102,12 @@ instance HasEndpoint (sub :: Type) => HasEndpoint (Header' mods h a :> sub) wher
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
 
+#if MIN_VERSION_servant(0,18,2)
 instance HasEndpoint (sub :: Type) => HasEndpoint (Fragment a :> sub) where
   getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
+#endif
 
 instance
   HasEndpoint (sub :: Type)
@@ -128,10 +132,12 @@ instance HasEndpoint (sub :: Type) => HasEndpoint (ReqBody' mods cts a :> sub) w
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
 
+#if MIN_VERSION_servant(0,15,0)
 instance HasEndpoint (sub :: Type) => HasEndpoint (StreamBody' mods framing cts a :> sub) where
   getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
+#endif
 
 instance HasEndpoint (sub :: Type) => HasEndpoint (RemoteHost :> sub) where
   getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
@@ -169,6 +175,7 @@ instance ReflectMethod method => HasEndpoint (Verb method status cts a) where
     where
       method = reflectMethod (Proxy :: Proxy method)
 
+#if MIN_VERSION_servant(0,17,0)
 instance ReflectMethod method => HasEndpoint (NoContentVerb method) where
   getEndpoint _ req = case pathInfo req of
     [] | requestMethod req == method -> Just (Endpoint [] method)
@@ -179,7 +186,9 @@ instance ReflectMethod method => HasEndpoint (NoContentVerb method) where
   enumerateEndpoints _ = [Endpoint mempty method]
     where
       method = reflectMethod (Proxy :: Proxy method)
+#endif
 
+#if MIN_VERSION_servant(0,18,1)
 instance ReflectMethod method => HasEndpoint (UVerb method contentType as) where
   getEndpoint _ req = case pathInfo req of
     [] | requestMethod req == method -> Just (Endpoint [] method)
@@ -190,6 +199,7 @@ instance ReflectMethod method => HasEndpoint (UVerb method contentType as) where
   enumerateEndpoints _ = [Endpoint mempty method]
     where
       method = reflectMethod (Proxy :: Proxy method)
+#endif
 
 instance ReflectMethod method => HasEndpoint (Stream method status framing ct a) where
   getEndpoint _ req = case pathInfo req of
