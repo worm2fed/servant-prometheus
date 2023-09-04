@@ -11,8 +11,10 @@ maintainer: Andrii Demydenko <worm2fed@gmail.com>
 
 extra-source-files:
   - README.md
-  - CHANGELOG.md
   - LICENSE
+
+extra-doc-files:
+  - CHANGELOG.md
 
 tested-with: GHC ==9.2.8
 
