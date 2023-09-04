@@ -29,4 +29,4 @@ main = do
 ## Runtime overhead
 Instrumenting your API introduces a non-zero runtime overhead, on the order of 200 - 600 µsec depending upon your machine. It's a good idea to run the benchmarks on your intended production platform to get an idea of how large the overhead will be. You'll need to have `wrk` installed to run the benchmarks.
 
-In general, the runtime overhead should be effectively negligible if your handlers are issuing network requests, such as to databases. If you have handlers that are small, CPU-only, and requested frequently, you will see a performance hit from Servant-EKG.
+In general, the runtime overhead should be effectively negligible if your handlers are issuing network requests, such as to databases. If you have handlers that are small, CPU-only, and requested frequently, you will see a performance hit from `servant-prometheus`.
