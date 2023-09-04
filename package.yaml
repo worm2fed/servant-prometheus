@@ -1,5 +1,5 @@
 name: servant-prometheus
-version: 0.1.1
+version: 1.0.0
 github: worm2fed/servant-prometheus
 synopsis: Helpers for using prometheus with servant
 description: Please see the README on GitHub at <https://github.com/worm2fed/servant-prometheus#readme>
@@ -81,19 +81,19 @@ ghc-options:
   - -Wno-implicit-prelude
 
 dependencies:
-  - base >=4.10 && < 5
+  - base >=4.10 && < 4.17
 
 library:
   source-dirs: lib
   dependencies:
-    - clock
-    - ghc-prim
-    - hashable
-    - http-types
-    - prometheus-client
-    - servant
-    - text
-    - wai
+    - clock >= 0.8.3 && < 0.9
+    - ghc-prim >= 0.8.0 && < 0.9
+    - hashable >= 1.4.2 && < 1.5
+    - http-types >= 0.12.3 && < 0.13
+    - prometheus-client >= 1.1.0 && < 1.2
+    - servant >=0.14 && <0.20
+    - text >= 1.2.5 && < 1.3
+    - wai >=3.2.3 && <3.3
 
 tests:
   spec:
@@ -107,7 +107,7 @@ tests:
     dependencies:
       - aeson
       - containers
-      - hspec
+      - hspec >=2 && <3
       - hspec-expectations-pretty-diff
       - http-client
       - prometheus-client
@@ -117,7 +117,7 @@ tests:
       - servant-server
       - text
       - wai
-      - warp
+      - warp >=3.2.4 && <3.4
 
 benchmarks:
   bench:
