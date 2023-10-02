@@ -1,6 +1,7 @@
 # servant-prometheus
 
 [![Build status](https://github.com/worm2fed/servant-prometheus/actions/workflows/ci.yml/badge.svg)](https://github.com/worm2fed/servant-prometheus/actions/workflows/ci.yml)
+[![Hackage](https://img.shields.io/hackage/v/servant-prometheus.svg?logo=haskell)](https://hackage.haskell.org/package/servant-prometheus)
 
 # Servant Performance Counters
 

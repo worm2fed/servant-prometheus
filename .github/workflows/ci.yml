@@ -20,6 +20,7 @@ jobs:
 
     env:
       GHC_VERSION: 9.2.8
+      STACK_LTS: "0" # actual value will be set in later steps
 
     steps:
       - uses: actions/checkout@v3
@@ -90,5 +91,4 @@ jobs:
       - name: Build & Test
         run: |
           stack build -j2 --fast --test --pedantic \
-            --flag servant-prometheus:warning-as-error \
             --ghc-options="-j -O0"
