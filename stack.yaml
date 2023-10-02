@@ -1,4 +1,4 @@
-resolver: lts-20.26
+resolver: lts-21.14
 
 ghc-options:
   # locally install Haddocs for "everything": deps and the project

@@ -1,11 +1,11 @@
 cabal-version: 2.4
 
--- This file has been generated from package.yaml by hpack version 0.35.2.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
 name:           servant-prometheus
-version:        1.0.0
+version:        1.1.0
 synopsis:       Helpers for using prometheus with servant
 description:    Please see the README on GitHub at <https://github.com/worm2fed/servant-prometheus#readme>
 category:       Servant, Web, System
@@ -17,7 +17,8 @@ license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
 tested-with:
-    GHC ==9.2.8
+    GHC == 9.2.8
+  , GHC == 9.4.7
 extra-source-files:
     README.md
     LICENSE
@@ -27,11 +28,6 @@ extra-doc-files:
 source-repository head
   type: git
   location: https://github.com/worm2fed/servant-prometheus
-
-flag warning-as-error
-  description: Assume every warning as error
-  manual: True
-  default: False
 
 library
   exposed-modules:
@@ -60,18 +56,16 @@ library
       UndecidableInstances
   ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-inferred-safe-imports -Wno-missing-safe-haskell-mode -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-prepositive-qualified-module -Wno-missing-kind-signatures -Wno-implicit-prelude
   build-depends:
-      base >=4.10 && <4.17
+      base >=4.10 && <4.18
     , clock >=0.8.3 && <0.9
-    , ghc-prim >=0.8.0 && <0.9
+    , ghc-prim >=0.8.0 && <0.10
     , hashable >=1.4.2 && <1.5
     , http-types >=0.12.3 && <0.13
     , prometheus-client >=1.1.0 && <1.2
     , servant >=0.14 && <0.20
-    , text >=1.2.5 && <1.3
+    , text >=1.2.5 && <2.1
     , wai >=3.2.3 && <3.3
   default-language: Haskell2010
-  if flag(warning-as-error)
-    ghc-options: -Werror
 
 test-suite spec
   type: exitcode-stdio-1.0
@@ -102,8 +96,8 @@ test-suite spec
   build-tool-depends:
       hspec-discover:hspec-discover
   build-depends:
-      aeson ==2.0.*
-    , base >=4.10 && <4.17
+      aeson >=2.0 && <2.2
+    , base >=4.10 && <4.18
     , containers >=0.6.5 && <0.7
     , hspec ==2.*
     , hspec-expectations-pretty-diff >=0.7.2.2 && <0.8
@@ -117,8 +111,6 @@ test-suite spec
     , wai
     , warp >=3.2.4 && <3.4
   default-language: Haskell2010
-  if flag(warning-as-error)
-    ghc-options: -Werror
 
 benchmark bench
   type: exitcode-stdio-1.0
@@ -146,7 +138,7 @@ benchmark bench
       UndecidableInstances
   ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-inferred-safe-imports -Wno-missing-safe-haskell-mode -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-prepositive-qualified-module -Wno-missing-kind-signatures -Wno-implicit-prelude -threaded "-with-rtsopts=-N -A64m -AL256m"
   build-depends:
-      base >=4.10 && <4.17
+      base >=4.10 && <4.18
     , process >=1.6.16 && <1.7
     , servant-prometheus
     , servant-server
@@ -154,5 +146,3 @@ benchmark bench
     , wai
     , warp
   default-language: Haskell2010
-  if flag(warning-as-error)
-    ghc-options: -Werror
