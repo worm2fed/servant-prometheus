@@ -175,6 +175,13 @@ instance ReflectMethod method => HasEndpoint (Verb method status cts a) where
     where
       method = reflectMethod (Proxy :: Proxy method)
 
+#if MIN_VERSION_servant(0,5,0)
+instance HasEndpoint (sub :: Type) => HasEndpoint (AuthProtect a :> sub) where
+  getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
+
+  enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
+#endif
+
 #if MIN_VERSION_servant(0,17,0)
 instance ReflectMethod method => HasEndpoint (NoContentVerb method) where
   getEndpoint _ req = case pathInfo req of
