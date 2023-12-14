@@ -21,8 +21,8 @@ import Servant
   , ReqBody
   , Server
   , serve
-  , type (:<|>) (..)
-  , type (:>)
+  , (:<|>) (..)
+  , (:>)
   )
 import Servant.Client
   ( BaseUrl (..)

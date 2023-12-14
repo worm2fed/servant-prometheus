@@ -19,24 +19,21 @@ extra-doc-files:
 tested-with:
   - GHC == 9.2.8
   - GHC == 9.4.7
+  - GHC == 9.4.8
 
 verbatim:
   cabal-version: 2.4
 
+# GHC's GHC2021 language extension is supported by GHC >= 9.2.1
+# for more details see: https://github.com/ghc-proposals/ghc-proposals/blob/master/proposals/0380-ghc2021.rst
+language: GHC2021
+
 default-extensions:
-  - BangPatterns
   - DataKinds
   - DeriveAnyClass
-  - DeriveGeneric
   - DerivingStrategies
-  - FlexibleContexts
-  - FlexibleInstances
-  - ImportQualifiedPost
   - OverloadedStrings
-  - PolyKinds
   - RecordWildCards
-  - ScopedTypeVariables
-  - TypeOperators
   - UndecidableInstances
 
 ghc-options:
