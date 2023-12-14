@@ -10,7 +10,7 @@ import Servant
   , JSON
   , Proxy (..)
   , serve
-  , type (:>)
+  , (:>)
   )
 import System.Process (callCommand)
 
