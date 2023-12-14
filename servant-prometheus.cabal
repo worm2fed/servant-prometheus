@@ -19,6 +19,7 @@ build-type:     Simple
 tested-with:
     GHC == 9.2.8
   , GHC == 9.4.7
+  , GHC == 9.4.8
 extra-source-files:
     README.md
     LICENSE

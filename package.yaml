@@ -19,6 +19,7 @@ extra-doc-files:
 tested-with:
   - GHC == 9.2.8
   - GHC == 9.4.7
+  - GHC == 9.4.8
 
 verbatim:
   cabal-version: 2.4
