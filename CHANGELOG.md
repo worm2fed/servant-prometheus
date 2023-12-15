@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Add an `HasEndpoint` instance for `AuthProtect`
+
 1.1.0
 =======
 
