@@ -1,5 +1,5 @@
 name: servant-prometheus
-version: 1.1.0
+version: 1.2.0
 github: worm2fed/servant-prometheus
 synopsis: Helpers for using prometheus with servant
 description: Please see the README on GitHub at <https://github.com/worm2fed/servant-prometheus#readme>
