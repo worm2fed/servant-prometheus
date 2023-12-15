@@ -5,7 +5,7 @@ cabal-version: 2.4
 -- see: https://github.com/sol/hpack
 
 name:           servant-prometheus
-version:        1.1.0
+version:        1.2.0
 synopsis:       Helpers for using prometheus with servant
 description:    Please see the README on GitHub at <https://github.com/worm2fed/servant-prometheus#readme>
 category:       Servant, Web, System
