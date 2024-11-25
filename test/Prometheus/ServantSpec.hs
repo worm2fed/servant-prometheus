@@ -1,6 +1,5 @@
 module Prometheus.ServantSpec (spec) where
 
-import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
@@ -23,7 +22,7 @@ import Servant
   , Post
   , Proxy (..)
   , QueryParam
-  , RawM
+  , Raw
   , ReqBody
   , Server
   , serve
@@ -105,7 +104,7 @@ type TestApi =
     -- DELETE /greet/:greetid
     :<|> "greet" :> Capture "greetid" Text :> Delete '[JSON] NoContent
     -- GET /proxy/some/proxy/route
-    :<|> "proxy" :> CaptureAll "proxyRoute" Text :> RawM
+    :<|> "proxy" :> CaptureAll "proxyRoute" Text :> Raw
 
 testApi :: Proxy TestApi
 testApi = Proxy
@@ -127,12 +126,8 @@ server = helloH :<|> postGreetH :<|> deleteGreetH :<|> proxyH
 
     deleteGreetH _ = pure NoContent
 
-    proxyH
-      :: [Text]
-      -> Wai.Request
-      -> (Wai.Response -> IO Wai.ResponseReceived)
-      -> Servant.Handler Wai.ResponseReceived
-    proxyH _ req responder = liftIO $ responder $ Wai.responseLBS ok200 [] "success"
+    proxyH :: [Text] -> Servant.Tagged Servant.Handler Wai.Application
+    proxyH _ = Servant.Tagged $ \_ responder -> responder $ Wai.responseLBS ok200 [] "success"
 
 -- | Turn the server into a WAI app. 'serve' is provided by servant,
 -- more precisely by the Servant.Server module.
