@@ -1,16 +1,21 @@
 module Prometheus.ServantSpec (spec) where
 
+import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
 import Data.Text qualified as T
 import GHC.Generics (Generic)
 import Network.HTTP.Client (defaultManagerSettings, newManager)
+import Network.HTTP.Types.Method (methodGet)
+import Network.HTTP.Types.Status (ok200)
 import Network.Wai (Application)
+import Network.Wai qualified as Wai
 import Network.Wai.Handler.Warp (Port, withApplication)
 import Prometheus qualified as P
 import Servant
   ( Capture
+  , CaptureAll
   , Delete
   , Get
   , JSON
@@ -18,12 +23,14 @@ import Servant
   , Post
   , Proxy (..)
   , QueryParam
+  , RawM
   , ReqBody
   , Server
   , serve
   , (:<|>) (..)
   , (:>)
   )
+import Servant qualified
 import Servant.Client
   ( BaseUrl (..)
   , ClientError
@@ -44,7 +51,7 @@ import Prometheus.Servant.Internal (Endpoint (..), HasEndpoint (..))
 
 spec :: Spec
 spec = describe "servant-prometheus" $ do
-  let getEp :<|> postEp :<|> deleteEp = client testApi
+  let getEp :<|> postEp :<|> deleteEp :<|> proxyEp = client testApi
 
   it "collects number of request" $
     withApp $ \port -> do
@@ -54,6 +61,7 @@ spec = describe "servant-prometheus" $ do
       _ <- runFn $ getEp "name" Nothing
       _ <- runFn $ postEp (Greet "hi")
       _ <- runFn $ deleteEp "blah"
+      _ <- runFn $ proxyEp ["some", "proxy", "route"] methodGet
 
       let Metrics{..} = defaultMetrics
       latencies <- P.getVectorWith mLatency P.getHistogram
@@ -61,9 +69,10 @@ spec = describe "servant-prometheus" $ do
         `shouldBe` [ ("/greet", "POST", "200")
                    , ("/greet/:greetid", "DELETE", "200")
                    , ("/hello/:name", "GET", "200")
+                   , ("/proxy/*", "RAW", "200")
                    ]
       map (sum . map snd . Map.toList . snd) latencies
-        `shouldBe` [1, 1, 1]
+        `shouldBe` [1, 1, 1, 1]
 
   it "is comprehensive" $ do
     let !_typeLevelTest = prometheusMiddleware defaultMetrics comprehensiveAPI
@@ -74,6 +83,7 @@ spec = describe "servant-prometheus" $ do
       `shouldBe` [ Endpoint ["hello", ":name"] "GET"
                  , Endpoint ["greet"] "POST"
                  , Endpoint ["greet", ":greetid"] "DELETE"
+                 , Endpoint ["proxy", "*"] "RAW"
                  ]
 
 -- * Example
@@ -94,6 +104,8 @@ type TestApi =
     :<|> "greet" :> ReqBody '[JSON] Greet :> Post '[JSON] Greet
     -- DELETE /greet/:greetid
     :<|> "greet" :> Capture "greetid" Text :> Delete '[JSON] NoContent
+    -- GET /proxy/some/proxy/route
+    :<|> "proxy" :> CaptureAll "proxyRoute" Text :> RawM
 
 testApi :: Proxy TestApi
 testApi = Proxy
@@ -105,7 +117,7 @@ testApi = Proxy
 --
 -- Each handler runs in the 'EitherT (Int, String) IO' monad.
 server :: Server TestApi
-server = helloH :<|> postGreetH :<|> deleteGreetH
+server = helloH :<|> postGreetH :<|> deleteGreetH :<|> proxyH
   where
     helloH name Nothing = helloH name (Just False)
     helloH name (Just False) = pure . Greet $ "Hello, " <> name
@@ -114,6 +126,13 @@ server = helloH :<|> postGreetH :<|> deleteGreetH
     postGreetH = pure
 
     deleteGreetH _ = pure NoContent
+
+    proxyH
+      :: [Text]
+      -> Wai.Request
+      -> (Wai.Response -> IO Wai.ResponseReceived)
+      -> Servant.Handler Wai.ResponseReceived
+    proxyH _ req responder = liftIO $ responder $ Wai.responseLBS ok200 [] "success"
 
 -- | Turn the server into a WAI app. 'serve' is provided by servant,
 -- more precisely by the Servant.Server module.

@@ -224,12 +224,29 @@ instance HasEndpoint Raw where
 
   enumerateEndpoints _ = [Endpoint [] "RAW"]
 
+instance HasEndpoint RawM where
+  getEndpoint _ _ = Just (Endpoint [] "RAW")
+
+  enumerateEndpoints _ = [Endpoint [] "RAW"]
+
 instance HasEndpoint (sub :: Type) => HasEndpoint (CaptureAll (h :: Symbol) a :> sub) where
+  getEndpoint _ req =
+    case pathInfo req of
+      [] -> Nothing
+      _ -> do
+        Endpoint{..} <- getEndpoint (Proxy :: Proxy sub) req{pathInfo = []}
+        pure $ Endpoint ("*" : ePathSegments) eMethod
+
+  enumerateEndpoints _ = do
+    let qualify Endpoint{..} = Endpoint ("*" : ePathSegments) eMethod
+    map qualify $ enumerateEndpoints (Proxy :: Proxy sub)
+
+instance HasEndpoint (sub :: Type) => HasEndpoint (BasicAuth (realm :: Symbol) a :> sub) where
   getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
 
-instance HasEndpoint (sub :: Type) => HasEndpoint (BasicAuth (realm :: Symbol) a :> sub) where
+instance HasEndpoint (sub :: Type) => HasEndpoint (WithResource a :> sub) where
   getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
