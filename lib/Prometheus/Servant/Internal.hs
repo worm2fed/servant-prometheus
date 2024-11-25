@@ -241,7 +241,7 @@ instance HasEndpoint (sub :: Type) => HasEndpoint (BasicAuth (realm :: Symbol) a
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
 
-#if MIN_VERSION_servant(0,2,0)
+#if MIN_VERSION_servant(0,20,0)
 instance HasEndpoint (sub :: Type) => HasEndpoint (WithResource a :> sub) where
   getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
 
