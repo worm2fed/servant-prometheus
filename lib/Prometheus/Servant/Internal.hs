@@ -224,11 +224,6 @@ instance HasEndpoint Raw where
 
   enumerateEndpoints _ = [Endpoint [] "RAW"]
 
-instance HasEndpoint RawM where
-  getEndpoint _ _ = Just (Endpoint [] "RAW")
-
-  enumerateEndpoints _ = [Endpoint [] "RAW"]
-
 instance HasEndpoint (sub :: Type) => HasEndpoint (CaptureAll (h :: Symbol) a :> sub) where
   getEndpoint _ req =
     case pathInfo req of
@@ -246,7 +241,14 @@ instance HasEndpoint (sub :: Type) => HasEndpoint (BasicAuth (realm :: Symbol) a
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
 
+#if MIN_VERSION_servant(0,2,0)
 instance HasEndpoint (sub :: Type) => HasEndpoint (WithResource a :> sub) where
   getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
+
+instance HasEndpoint RawM where
+  getEndpoint _ _ = Just (Endpoint [] "RAW")
+
+  enumerateEndpoints _ = [Endpoint [] "RAW"]
+#endif
