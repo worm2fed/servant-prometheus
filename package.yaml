@@ -1,5 +1,5 @@
 name: servant-prometheus
-version: 1.2.0
+version: 1.3.0
 github: worm2fed/servant-prometheus
 synopsis: Helpers for using prometheus with servant
 description: Please see the README on GitHub at <https://github.com/worm2fed/servant-prometheus#readme>
@@ -71,18 +71,18 @@ ghc-options:
   - -Wno-implicit-prelude
 
 dependencies:
-  - base >=4.10 && < 4.18
+  - base >=4.10 && < 4.21
 
 library:
   source-dirs: lib
   dependencies:
     - clock >= 0.8.3 && < 0.9
-    - ghc-prim >= 0.8.0 && < 0.10
-    - hashable >= 1.4.2 && < 1.5
+    - ghc-prim >= 0.8.0 && < 0.12
+    - hashable >= 1.4.2 && < 1.6
     - http-types >= 0.12.3 && < 0.13
     - prometheus-client >= 1.1.0 && < 1.2
-    - servant >= 0.14 && < 0.20
-    - text >= 1.2.5 && < 2.1
+    - servant >= 0.14 && < 0.21
+    - text >= 1.2.5 && < 2.2
     - wai >= 3.2.3 && < 3.3
 
 tests:
@@ -97,18 +97,19 @@ tests:
     dependencies:
       - servant-prometheus
 
-      - aeson >= 2.0 && < 2.2
-      - containers >= 0.6.5 && < 0.7
+      - aeson >= 2.0 && < 2.3
+      - containers >= 0.6.5 && < 0.8
       - hspec >= 2 && < 3
       - hspec-expectations-pretty-diff >= 0.7.2.2 && < 0.8
       - http-client >= 0.7.13 && < 0.8
+      - http-types >=0.12.4 && <0.13
       - prometheus-client
       - servant
-      - servant-client >= 0.14 && < 0.20
-      - servant-server >= 0.14 && < 0.20
+      - servant-client >= 0.14 && < 0.21
+      - servant-server >= 0.14 && < 0.21
       - text
       - wai
-      - warp >= 3.2.4 && < 3.4
+      - warp >= 3.2.4 && < 3.5
 
 benchmarks:
   bench:
